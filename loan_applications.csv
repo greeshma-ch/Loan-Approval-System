@@ -1,0 +1,5 @@
+Name,Age,Annual Income,Loan Amount,Credit History,Existing Loans,Monthly Expenses,Assets Value,Credit Score,Status
+Alice,25,100000.00,20000.00,0,No,15000.00,30000.00,50.00,Rejected
+Angelina,28,3000000.00,100000.00,0,No,30000.00,20000.00,60.00,Rejected
+Bharath,23,2800000.00,50000.00,0,No,15000.00,30000.00,60.00,Rejected
+Alok,34,5000000.00,200000.00,0,No,30000.00,50000.00,70.00,Approved
