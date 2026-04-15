@@ -96,14 +96,15 @@ Then open:
 http://localhost:5173
 
 ##📊 Features Summary
-Rule-based credit scoring system
-Loan approval decision engine
-CLI-based backend with file storage
-Interactive frontend interface
-🔮 Future Improvements
-Backend API integration
-Database support (MongoDB / SQL)
-Authentication system
-Analytics dashboard
+* Rule-based credit scoring system
+* Loan approval decision engine
+* CLI-based backend with file storage
+* Interactive frontend interface
+
+##🔮 Future Improvements
+* Backend API integration
+* Database support (MongoDB / SQL)
+* Authentication system
+* Analytics dashboard
 
 
