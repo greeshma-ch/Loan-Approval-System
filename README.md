@@ -5,9 +5,7 @@ The project consists of a C++ console application (backend logic) and a React-ba
 
 🌐 Live Demo
 
-👉 Add your deployed frontend link here
-
-https://loan-approval-system-gules.vercel.app/
+👉https://loan-approval-system-gules.vercel.app/
 
 ## 📌 Features
 
