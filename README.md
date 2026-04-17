@@ -1,4 +1,4 @@
-#💼 CREDO - Loan Approval System (C++ + React Application) 
+# 💼 CREDO - Loan Approval System (C++ + React Application) 
 
 CREDO is a Loan Approval System that evaluates and processes customer loan applications using a rule-based scoring algorithm.
 The project consists of a C++ console application (backend logic) and a React-based frontend for an interactive user experience.
