@@ -76,12 +76,12 @@ The project consists of a C++ console application (backend logic) and a React-ba
 🔹 Backend (C++)
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/@greeshma-ch/loan-approval-system.git
+   git clone https://github.com/greeshma-ch/loan-approval-system.git
    cd loan-approval-system
 2. Compile the code using g++ or any C++ compiler:
 
    ```bash
-   g++ main.cpp -o loan_system
+   g++ scoringlogic.cpp -o loan_system
    ./loan_system
 
 🔹 Frontend (React)
