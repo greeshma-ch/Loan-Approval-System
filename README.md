@@ -1,51 +1,79 @@
-# 💼 Loan Approval System (C++ Console Application)
+💼 CREDO - Loan Approval System (C++ + React Application) 
 
-This is a Loan Approval System developed in C++ that evaluates and processes customer loan applications using a scoring algorithm. It is designed as a mini project suitable for academic or beginner-level C++ file handling and OOP practice.
+CREDO is a Loan Approval System that evaluates and processes customer loan applications using a rule-based scoring algorithm.
+The project consists of a C++ console application (backend logic) and a React-based frontend for an interactive user experience.
 
+🌐 Live Demo
 
+👉https://loan-approval-system-gules.vercel.app/
 
 ## 📌 Features
 
-- 📝 Accepts new loan applications with complete customer data.
-- 📂 Saves all applications in a CSV file using file handling.
-- 📊 Calculates a credit score based on:
-  - Income-to-loan ratio
-  - Credit history
-  - Existing loans
-  - Monthly expenses vs income
-  - Assets owned
-- ✅ Approves or rejects the loan based on the credit score.
-- 📄 Displays all stored applications.
-- 🏆 Highlights top-scoring applicants (score ≥ 80).
+### 🧠 Backend (C++ CLI)
 
+* 📝 Accepts new loan applications with complete customer data
+* 📂 Saves all applications in a CSV file using file handling
+* 📊 Calculates a credit score based on multiple financial factors
+* ✅ Approves or rejects loans based on computed score
+* 📄 Displays all stored applications
+* 🏆 Highlights top-scoring applicants using priority queue
+
+---
+
+### 💻 Frontend (React)
+
+* 🧾 Interactive loan application form
+* ⚡ Real-time credit score calculation
+* 📊 Instant loan approval/rejection display
+* 🎨 Clean and responsive UI
+
+---
 
 ## 🧮 Credit Score Breakdown
 
-| Factor                        | Points      |
-|-------------------------------|-------------|
-| High income vs loan ratio     | +20         |
-| Long credit history           | +20         |
-| No existing loans             | +15         |
-| Low monthly expenses          | +15         |
-| High asset value              | +30         |
+| Factor                           | Points |
+| -------------------------------- | ------ |
+| High income                      | +25    |
+| Moderate income                  | +15    |
+| Low income                       | +5     |
+| Long credit history (≥5 years)   | +20    |
+| Medium credit history (≥2 years) | +10    |
+| Low loan-to-income ratio (<0.2)  | +20    |
+| Moderate ratio (<0.5)            | +10    |
+| No existing loans                | +15    |
+| High asset value                 | +10    |
+| Low monthly expenses             | +10    |
+| Moderate expenses                | +5     |
 
-> Score ≥ 70 = **Approved**  
-> Score < 70 = **Rejected**
+---
+
+## ✅ Decision Rule
+
+* **Score ≥ 70 → Approved ✅**
+* **Score < 70 → Rejected ❌**
 
 ---
 
 ## 🧰 Technologies Used
 
-- C++17
-- File Handling (`fstream`)
-- Simple Scoring Logic
-- Menu-driven console UI
-- CSV storage format
+### Backend:
 
----
+* C++17
+* File Handling (`fstream`)
+* STL (Priority Queue, Vectors)
+* CSV File Storage
+
+### Frontend:
+
+* React (Vite)
+* JavaScript
+* HTML/CSS
+
+
+
 
 ## 🚀 How to Run
-
+🔹 Backend (C++)
 1. **Clone the repo**
    ```bash
    git clone https://github.com/@greeshma-ch/loan-approval-system.git
@@ -55,61 +83,26 @@ This is a Loan Approval System developed in C++ that evaluates and processes cus
    ```bash
    g++ main.cpp -o loan_system
    ./loan_system
-# 💼 Loan Approval System (C++ Console Application)
 
-This is a Loan Approval System developed in C++ that evaluates and processes customer loan applications using a scoring algorithm. It is designed as a mini project suitable for academic or beginner-level C++ file handling and OOP practice.
+🔹 Frontend (React)
+cd frontend
+npm install
+npm run dev
 
----
+Then open:
 
-## 📌 Features
+http://localhost:5173
 
-- 📝 Accepts new loan applications with complete customer data.
-- 📂 Saves all applications in a CSV file using file handling.
-- 📊 Calculates a credit score based on:
-  - Income-to-loan ratio
-  - Credit history
-  - Existing loans
-  - Monthly expenses vs income
-  - Assets owned
-- ✅ Approves or rejects the loan based on the credit score.
-- 📄 Displays all stored applications.
-- 🏆 Highlights top-scoring applicants (score ≥ 80).
+##📊 Features Summary
+* Rule-based credit scoring system
+* Loan approval decision engine
+* CLI-based backend with file storage
+* Interactive frontend interface
 
----
+##🔮 Future Improvements
+* Backend API integration
+* Database support (MongoDB / SQL)
+* Authentication system
+* Analytics dashboard
 
-## 🧮 Credit Score Breakdown
 
-| Factor                        | Points      |
-|-------------------------------|-------------|
-| High income vs loan ratio     | +20         |
-| Long credit history           | +20         |
-| No existing loans             | +15         |
-| Low monthly expenses          | +15         |
-| High asset value              | +30         |
-
-> Score ≥ 70 = **Approved**  
-> Score < 70 = **Rejected**
-
----
-
-## 🧰 Technologies Used
-
-- C++17
-- File Handling (`fstream`)
-- Simple Scoring Logic
-- Menu-driven console UI
-- CSV storage format
-
----
-
-## 🚀 How to Run
-
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/@greeshma-ch/loan-approval-system.git
-   cd loan-approval-system
-2. Compile the code using g++ or any C++ compiler:
-
-   ```bash
-   g++ main.cpp -o loan_system
-   ./loan_system

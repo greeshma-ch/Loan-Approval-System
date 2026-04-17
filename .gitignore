@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Ignore compiled object files
 *.o
 *.obj
@@ -23,29 +22,4 @@ Thumbs.db
 
 # Ignore user-generated data files
 loan_data.csv
-=======
-# Ignore compiled object files
-*.o
-*.obj
 
-# Ignore executable files
-*.exe
-*.out
-*.a
-*.so
-
-# Ignore dependency files
-*.d
-
-# Ignore system files
-.DS_Store
-Thumbs.db
-
-# Ignore backup and temporary files
-*~
-*.bak
-*.swp
-
-# Ignore user-generated data files
-loan_data.csv
->>>>>>> 0bc916b10a60debfd24bed43da3f1ec78fb9d5aa
