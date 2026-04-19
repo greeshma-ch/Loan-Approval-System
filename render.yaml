@@ -1,0 +1,21 @@
+# Render.com Blueprint — CREDO Loan Approval System Backend
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: credo-backend
+    runtime: node
+    region: oregon
+    plan: free
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false  # Set manually in Render dashboard
+      - key: CORS_ORIGIN
+        value: https://loan-approval-system-gules.vercel.app
+      - key: CPP_ENGINE_PATH
+        value: ./scoring_engine

@@ -9,8 +9,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // ─── Middleware ───────────────────────────────────────────────
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',')
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  origin: allowedOrigins,
   credentials: true,
 }));
 app.use(express.json());
@@ -85,7 +89,7 @@ mongoose.connect(MONGODB_URI)
     console.log(`  📊  Database: ${mongoose.connection.db.databaseName}`);
     console.log('═══════════════════════════════════════════════════════════');
 
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log('');
       console.log(`  🚀  CREDO API Server running on http://localhost:${PORT}`);
       console.log(`  📡  Health check: http://localhost:${PORT}/api/health`);

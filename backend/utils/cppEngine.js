@@ -1,11 +1,38 @@
 const { spawn } = require('child_process');
 const path = require('path');
+const fs = require('fs');
 
-const ENGINE_PATH = path.resolve(
-  __dirname,
-  '..',
-  process.env.CPP_ENGINE_PATH || '../scoring_engine.exe'
-);
+/**
+ * Resolves the path to the C++ scoring engine binary.
+ * Handles both Windows (.exe) and Linux (no extension) for Render deployment.
+ */
+function getEnginePath() {
+  // Check env override first
+  if (process.env.CPP_ENGINE_PATH) {
+    const envPath = path.resolve(__dirname, '..', process.env.CPP_ENGINE_PATH);
+    if (fs.existsSync(envPath)) return envPath;
+  }
+
+  // Platform-aware defaults
+  const isWindows = process.platform === 'win32';
+  const candidates = isWindows
+    ? ['../scoring_engine.exe', '../scoring_engine', './scoring_engine.exe', './scoring_engine']
+    : ['./scoring_engine', '../scoring_engine', '../scoring_engine.exe'];
+
+  for (const candidate of candidates) {
+    const resolved = path.resolve(__dirname, '..', candidate);
+    if (fs.existsSync(resolved)) {
+      console.log(`🔧 C++ engine found at: ${resolved}`);
+      return resolved;
+    }
+  }
+
+  // Fallback — will trigger ENOENT error with helpful message
+  const fallback = isWindows ? '../scoring_engine.exe' : './scoring_engine';
+  return path.resolve(__dirname, '..', fallback);
+}
+
+const ENGINE_PATH = getEnginePath();
 
 /**
  * Runs the C++ scoring engine with JSON stdin/stdout.
@@ -44,7 +71,7 @@ function runScoringEngine(applicationData) {
       if (err.code === 'ENOENT') {
         reject(new Error(
           `C++ scoring engine not found at: ${ENGINE_PATH}. ` +
-          `Please compile scoringlogic.cpp: g++ -o scoring_engine.exe scoringlogic.cpp`
+          `Please compile: g++ -o scoring_engine scoringlogic.cpp`
         ));
       } else {
         reject(new Error(`Failed to start C++ engine: ${err.message}`));
