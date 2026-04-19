@@ -1,3 +1,4 @@
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -6,9 +7,6 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <cstring>
-#include <cctype>
-
 
 using namespace std;
 
@@ -23,14 +21,14 @@ struct Customer {
   float assets_value;
   float score;
 
-  bool operator<(const Customer &other) const {
-    return score < other.score;
-  }
+  bool operator<(const Customer &other) const { return score < other.score; }
 };
 
+// Function to calculate credit score
 float calculateScore(Customer &c) {
   float score = 0;
 
+  // Income-based score
   if (c.annual_income >= 50000)
     score += 25;
   else if (c.annual_income >= 30000)
@@ -38,23 +36,27 @@ float calculateScore(Customer &c) {
   else
     score += 5;
 
+  // Credit history score
   if (c.credit_history_years >= 5)
     score += 20;
   else if (c.credit_history_years >= 2)
     score += 10;
 
+  // Loan to income ratio
   float ratio = c.loan_amount / c.annual_income;
   if (ratio < 0.2)
     score += 20;
   else if (ratio < 0.5)
     score += 10;
 
+  // Existing loan status
   score += c.has_existing_loans ? 0 : 15;
 
   // Asset score
   if (c.assets_value >= 50000)
     score += 10;
 
+  // Monthly expense score
   if (c.monthly_expenses < 2000)
     score += 10;
   else if (c.monthly_expenses < 4000)
@@ -64,6 +66,7 @@ float calculateScore(Customer &c) {
   return score;
 }
 
+// Function to save data to CSV
 void saveToCSV(const Customer &c, bool writeHeader = false) {
   ofstream file("loan_applications.csv", ios::app);
   if (writeHeader) {
@@ -79,6 +82,7 @@ void saveToCSV(const Customer &c, bool writeHeader = false) {
   file.close();
 }
 
+// Function to evaluate loan approval
 void evaluateCustomer(const Customer &c) {
   cout << "\n--- Evaluation Result ---\n";
   cout << "Customer: " << c.name << endl;
@@ -86,6 +90,7 @@ void evaluateCustomer(const Customer &c) {
   cout << "Loan Status: " << (c.score >= 70 ? "Approved" : "Rejected") << "\n";
 }
 
+// Input customer data
 Customer getCustomerData() {
   Customer c;
   cout << "\n--- Enter Customer Data ---\n";
@@ -148,6 +153,7 @@ Customer getCustomerData() {
   return c;
 }
 
+// View application records
 void viewApplications() {
   ifstream file("loan_applications.csv");
   if (!file.is_open()) {
@@ -164,6 +170,7 @@ void viewApplications() {
   file.close();
 }
 
+// Show top N applicants
 void showTopApplicants(int n) {
   ifstream file("loan_applications.csv");
   if (!file.is_open()) {
@@ -222,7 +229,8 @@ void showTopApplicants(int n) {
 
 string trim(const string &s) {
   size_t start = s.find_first_not_of(" \t\n\r");
-  if (start == string::npos) return "";
+  if (start == string::npos)
+    return "";
   size_t end = s.find_last_not_of(" \t\n\r");
   return s.substr(start, end - start + 1);
 }
@@ -230,16 +238,20 @@ string trim(const string &s) {
 string jsonGetString(const string &json, const string &key) {
   string search = "\"" + key + "\"";
   size_t pos = json.find(search);
-  if (pos == string::npos) return "";
+  if (pos == string::npos)
+    return "";
 
   pos = json.find(':', pos + search.length());
-  if (pos == string::npos) return "";
+  if (pos == string::npos)
+    return "";
 
   pos = json.find('"', pos + 1);
-  if (pos == string::npos) return "";
+  if (pos == string::npos)
+    return "";
 
   size_t end = json.find('"', pos + 1);
-  if (end == string::npos) return "";
+  if (end == string::npos)
+    return "";
 
   return json.substr(pos + 1, end - pos - 1);
 }
@@ -247,16 +259,20 @@ string jsonGetString(const string &json, const string &key) {
 float jsonGetNumber(const string &json, const string &key) {
   string search = "\"" + key + "\"";
   size_t pos = json.find(search);
-  if (pos == string::npos) return 0;
+  if (pos == string::npos)
+    return 0;
 
   pos = json.find(':', pos + search.length());
-  if (pos == string::npos) return 0;
+  if (pos == string::npos)
+    return 0;
 
   pos++;
-  while (pos < json.length() && (json[pos] == ' ' || json[pos] == '\t')) pos++;
+  while (pos < json.length() && (json[pos] == ' ' || json[pos] == '\t'))
+    pos++;
 
   string numStr;
-  while (pos < json.length() && (isdigit(json[pos]) || json[pos] == '.' || json[pos] == '-')) {
+  while (pos < json.length() &&
+         (isdigit(json[pos]) || json[pos] == '.' || json[pos] == '-')) {
     numStr += json[pos];
     pos++;
   }
@@ -267,10 +283,12 @@ float jsonGetNumber(const string &json, const string &key) {
 bool jsonGetBool(const string &json, const string &key) {
   string search = "\"" + key + "\"";
   size_t pos = json.find(search);
-  if (pos == string::npos) return false;
+  if (pos == string::npos)
+    return false;
 
   pos = json.find(':', pos + search.length());
-  if (pos == string::npos) return false;
+  if (pos == string::npos)
+    return false;
 
   return json.find("true", pos) < json.find(',', pos) ||
          json.find("true", pos) < json.find('}', pos);
@@ -281,18 +299,25 @@ string generateBreakdownJSON(const Customer &c) {
   ss << fixed << setprecision(2);
 
   int incomePoints = 0;
-  if (c.annual_income >= 50000) incomePoints = 25;
-  else if (c.annual_income >= 30000) incomePoints = 15;
-  else incomePoints = 5;
+  if (c.annual_income >= 50000)
+    incomePoints = 25;
+  else if (c.annual_income >= 30000)
+    incomePoints = 15;
+  else
+    incomePoints = 5;
 
   int creditPoints = 0;
-  if (c.credit_history_years >= 5) creditPoints = 20;
-  else if (c.credit_history_years >= 2) creditPoints = 10;
+  if (c.credit_history_years >= 5)
+    creditPoints = 20;
+  else if (c.credit_history_years >= 2)
+    creditPoints = 10;
 
   float ratio = c.loan_amount / c.annual_income;
   int ratioPoints = 0;
-  if (ratio < 0.2) ratioPoints = 20;
-  else if (ratio < 0.5) ratioPoints = 10;
+  if (ratio < 0.2)
+    ratioPoints = 20;
+  else if (ratio < 0.5)
+    ratioPoints = 10;
 
   int loanPoints = c.has_existing_loans ? 0 : 15;
 
@@ -300,16 +325,24 @@ string generateBreakdownJSON(const Customer &c) {
   int assetPoints = c.assets_value >= 50000 ? 10 : 0;
 
   int expensePoints = 0;
-  if (c.monthly_expenses < 2000) expensePoints = 10;
-  else if (c.monthly_expenses < 4000) expensePoints = 5;
+  if (c.monthly_expenses < 2000)
+    expensePoints = 10;
+  else if (c.monthly_expenses < 4000)
+    expensePoints = 5;
 
   ss << "[";
-  ss << "{\"label\":\"Annual Income\",\"points\":" << incomePoints << ",\"maxPoints\":25},";
-  ss << "{\"label\":\"Credit History\",\"points\":" << creditPoints << ",\"maxPoints\":20},";
-  ss << "{\"label\":\"Loan-to-Income Ratio\",\"points\":" << ratioPoints << ",\"maxPoints\":20},";
-  ss << "{\"label\":\"No Existing Loans\",\"points\":" << loanPoints << ",\"maxPoints\":15},";
-  ss << "{\"label\":\"Asset Value\",\"points\":" << assetPoints << ",\"maxPoints\":10},";
-  ss << "{\"label\":\"Monthly Expenses\",\"points\":" << expensePoints << ",\"maxPoints\":10}";
+  ss << "{\"label\":\"Annual Income\",\"points\":" << incomePoints
+     << ",\"maxPoints\":25},";
+  ss << "{\"label\":\"Credit History\",\"points\":" << creditPoints
+     << ",\"maxPoints\":20},";
+  ss << "{\"label\":\"Loan-to-Income Ratio\",\"points\":" << ratioPoints
+     << ",\"maxPoints\":20},";
+  ss << "{\"label\":\"No Existing Loans\",\"points\":" << loanPoints
+     << ",\"maxPoints\":15},";
+  ss << "{\"label\":\"Asset Value\",\"points\":" << assetPoints
+     << ",\"maxPoints\":10},";
+  ss << "{\"label\":\"Monthly Expenses\",\"points\":" << expensePoints
+     << ",\"maxPoints\":10}";
   ss << "]";
 
   return ss.str();
@@ -373,7 +406,6 @@ void handleJsonMode() {
   cout << "}" << endl;
 }
 
-
 int main(int argc, char *argv[]) {
 
   // JSON API MODE — used by Node.js backend
@@ -386,6 +418,7 @@ int main(int argc, char *argv[]) {
   int choice;
   bool headerWritten = false;
 
+  // Write header only once if file is empty
   ifstream checkFile("loan_applications.csv");
   if (checkFile.peek() == ifstream::traits_type::eof()) {
     headerWritten = true;
@@ -413,7 +446,7 @@ int main(int argc, char *argv[]) {
       Customer c = getCustomerData();
       evaluateCustomer(c);
       saveToCSV(c, headerWritten);
-      headerWritten = false;
+      headerWritten = false; // Header only once
       break;
     }
     case 2:
