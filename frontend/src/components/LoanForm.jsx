@@ -3,6 +3,7 @@ import './LoanForm.css';
 
 const FIELD_CONFIG = [
   { name: 'name', label: 'Full Name', type: 'text', placeholder: 'e.g. Greeshma', icon: '👤', required: true },
+  { name: 'age', label: 'Age', type: 'number', placeholder: 'e.g. 25', icon: '🎂', required: true, min: 18 },
   { name: 'income', label: 'Annual Income (₹)', type: 'number', placeholder: 'e.g. 60000', icon: '💰', required: true, min: 0 },
   { name: 'loanAmount', label: 'Loan Amount (₹)', type: 'number', placeholder: 'e.g. 10000', icon: '🏦', required: true, min: 0 },
   { name: 'creditHistory', label: 'Credit History (Years)', type: 'number', placeholder: 'e.g. 6', icon: '📅', required: true, min: 0 },
@@ -13,6 +14,7 @@ const FIELD_CONFIG = [
 function LoanForm({ onSubmit, isLoading }) {
   const [form, setForm] = useState({
     name: '',
+    age: '',
     income: '',
     loanAmount: '',
     creditHistory: '',
@@ -39,6 +41,7 @@ function LoanForm({ onSubmit, isLoading }) {
   function validate() {
     const newErrors = {};
     if (!form.name.trim()) newErrors.name = 'Name is required';
+    if (!form.age || parseInt(form.age) < 18) newErrors.age = 'Must be 18 or older';
     if (!form.income || parseFloat(form.income) <= 0) newErrors.income = 'Enter valid income';
     if (!form.loanAmount || parseFloat(form.loanAmount) <= 0) newErrors.loanAmount = 'Enter valid loan amount';
     if (!form.creditHistory || parseInt(form.creditHistory) < 0) newErrors.creditHistory = 'Enter valid history';
@@ -63,6 +66,7 @@ function LoanForm({ onSubmit, isLoading }) {
   function handleReset() {
     setForm({
       name: '',
+      age: '',
       income: '',
       loanAmount: '',
       creditHistory: '',

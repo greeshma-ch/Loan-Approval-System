@@ -5,6 +5,7 @@ import ResultCard from './components/ResultCard';
 import ScoreBreakdown from './components/ScoreBreakdown';
 import ApplicationHistory from './components/ApplicationHistory';
 import { evaluateLoan } from './utils/loanScoring';
+import { submitApplication } from './api/loanApi';
 import './App.css';
 
 function App() {
@@ -13,31 +14,49 @@ function App() {
   const [customerName, setCustomerName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [historyKey, setHistoryKey] = useState(0);
+  const [apiError, setApiError] = useState(null);
   const resultRef = useRef(null);
 
-  function handleSubmit(form) {
+  async function handleSubmit(form) {
     setIsLoading(true);
     setResult(null);
     setCustomerData(null);
+    setApiError(null);
 
-    // Simulate brief processing delay for premium feel
-    setTimeout(() => {
-      const data = {
-        income: parseFloat(form.income),
-        loanAmount: parseFloat(form.loanAmount),
-        creditHistory: parseInt(form.creditHistory),
-        expenses: parseFloat(form.expenses),
-        assets: parseFloat(form.assets),
-        hasLoans: form.hasLoans === 'true',
+    const data = {
+      income: parseFloat(form.income),
+      loanAmount: parseFloat(form.loanAmount),
+      creditHistory: parseInt(form.creditHistory),
+      expenses: parseFloat(form.expenses),
+      assets: parseFloat(form.assets),
+      hasLoans: form.hasLoans === 'true',
+    };
+
+    try {
+      // ── Call the backend API (Node → C++ → MongoDB) ──
+      const apiResult = await submitApplication(form);
+
+      const res = {
+        score: apiResult.score,
+        status: apiResult.approved ? 'Approved ✅' : 'Rejected ❌',
+        approved: apiResult.approved,
       };
 
+      setResult(res);
+      setCustomerData(data);
+      setCustomerName(form.name);
+      setHistoryKey((prev) => prev + 1);
+    } catch (err) {
+      console.warn('API unavailable, falling back to local scoring:', err.message);
+      setApiError('Backend unavailable — using local scoring engine');
+
+      // ── Fallback: use the local JS scoring logic ──
       const res = evaluateLoan(data);
       setResult(res);
       setCustomerData(data);
       setCustomerName(form.name);
-      setIsLoading(false);
 
-      // Save to localStorage (mirrors CSV storage from C++)
+      // Fallback: save to localStorage
       const saved = JSON.parse(localStorage.getItem('loanApplications') || '[]');
       saved.push({
         name: form.name,
@@ -49,12 +68,14 @@ function App() {
       });
       localStorage.setItem('loanApplications', JSON.stringify(saved));
       setHistoryKey((prev) => prev + 1);
+    } finally {
+      setIsLoading(false);
 
       // Scroll to result
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
-    }, 1200);
+    }
   }
 
   return (
@@ -74,6 +95,14 @@ function App() {
             No credit check required — results in seconds.
           </p>
         </section>
+
+        {/* API Error Banner */}
+        {apiError && (
+          <div className="api-error-banner" id="api-error-banner">
+            <span>⚠️</span>
+            <span>{apiError}</span>
+          </div>
+        )}
 
         {/* Form Section */}
         <section className="content-section" id="application-section">

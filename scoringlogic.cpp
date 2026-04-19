@@ -6,6 +6,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <cstring>
 
 
 using namespace std;
@@ -220,23 +221,188 @@ void showTopApplicants(int n) {
   file.close();
 }
 
+// ============================================================
+// JSON HELPERS — Minimal JSON parser for flat objects (no deps)
+// ============================================================
+
+// Trim whitespace from both ends
+string trim(const string &s) {
+  size_t start = s.find_first_not_of(" \t\n\r");
+  if (start == string::npos) return "";
+  size_t end = s.find_last_not_of(" \t\n\r");
+  return s.substr(start, end - start + 1);
+}
+
+// Extract a string value for a given key from JSON
+string jsonGetString(const string &json, const string &key) {
+  string search = "\"" + key + "\"";
+  size_t pos = json.find(search);
+  if (pos == string::npos) return "";
+
+  pos = json.find(':', pos + search.length());
+  if (pos == string::npos) return "";
+
+  pos = json.find('"', pos + 1);
+  if (pos == string::npos) return "";
+
+  size_t end = json.find('"', pos + 1);
+  if (end == string::npos) return "";
+
+  return json.substr(pos + 1, end - pos - 1);
+}
+
+// Extract a numeric value for a given key from JSON
+float jsonGetNumber(const string &json, const string &key) {
+  string search = "\"" + key + "\"";
+  size_t pos = json.find(search);
+  if (pos == string::npos) return 0;
+
+  pos = json.find(':', pos + search.length());
+  if (pos == string::npos) return 0;
+
+  // Skip whitespace after colon
+  pos++;
+  while (pos < json.length() && (json[pos] == ' ' || json[pos] == '\t')) pos++;
+
+  string numStr;
+  while (pos < json.length() && (isdigit(json[pos]) || json[pos] == '.' || json[pos] == '-')) {
+    numStr += json[pos];
+    pos++;
+  }
+
+  return numStr.empty() ? 0 : stof(numStr);
+}
+
+// Extract a boolean value for a given key from JSON
+bool jsonGetBool(const string &json, const string &key) {
+  string search = "\"" + key + "\"";
+  size_t pos = json.find(search);
+  if (pos == string::npos) return false;
+
+  pos = json.find(':', pos + search.length());
+  if (pos == string::npos) return false;
+
+  return json.find("true", pos) < json.find(',', pos) ||
+         json.find("true", pos) < json.find('}', pos);
+}
+
+// Generate score breakdown JSON
+string generateBreakdownJSON(const Customer &c) {
+  stringstream ss;
+  ss << fixed << setprecision(2);
+
+  // Income score
+  int incomePoints = 0;
+  if (c.annual_income >= 50000) incomePoints = 25;
+  else if (c.annual_income >= 30000) incomePoints = 15;
+  else incomePoints = 5;
+
+  // Credit history
+  int creditPoints = 0;
+  if (c.credit_history_years >= 5) creditPoints = 20;
+  else if (c.credit_history_years >= 2) creditPoints = 10;
+
+  // Loan ratio
+  float ratio = c.loan_amount / c.annual_income;
+  int ratioPoints = 0;
+  if (ratio < 0.2) ratioPoints = 20;
+  else if (ratio < 0.5) ratioPoints = 10;
+
+  // Existing loans
+  int loanPoints = c.has_existing_loans ? 0 : 15;
+
+  // Assets
+  int assetPoints = c.assets_value >= 50000 ? 10 : 0;
+
+  // Expenses
+  int expensePoints = 0;
+  if (c.monthly_expenses < 2000) expensePoints = 10;
+  else if (c.monthly_expenses < 4000) expensePoints = 5;
+
+  ss << "[";
+  ss << "{\"label\":\"Annual Income\",\"points\":" << incomePoints << ",\"maxPoints\":25},";
+  ss << "{\"label\":\"Credit History\",\"points\":" << creditPoints << ",\"maxPoints\":20},";
+  ss << "{\"label\":\"Loan-to-Income Ratio\",\"points\":" << ratioPoints << ",\"maxPoints\":20},";
+  ss << "{\"label\":\"No Existing Loans\",\"points\":" << loanPoints << ",\"maxPoints\":15},";
+  ss << "{\"label\":\"Asset Value\",\"points\":" << assetPoints << ",\"maxPoints\":10},";
+  ss << "{\"label\":\"Monthly Expenses\",\"points\":" << expensePoints << ",\"maxPoints\":10}";
+  ss << "]";
+
+  return ss.str();
+}
+
+// JSON API mode — reads JSON from stdin, outputs JSON to stdout
+void handleJsonMode() {
+  // Read all of stdin
+  string input;
+  string line;
+  while (getline(cin, line)) {
+    input += line;
+  }
+
+  input = trim(input);
+  if (input.empty()) {
+    cout << "{\"error\":\"Empty input received\"}" << endl;
+    return;
+  }
+
+  // Parse input JSON
+  Customer c;
+  c.name = jsonGetString(input, "name");
+  c.age = (int)jsonGetNumber(input, "age");
+  c.annual_income = jsonGetNumber(input, "income");
+  c.loan_amount = jsonGetNumber(input, "loanAmount");
+  c.credit_history_years = (int)jsonGetNumber(input, "creditHistory");
+  c.has_existing_loans = jsonGetBool(input, "hasLoans");
+  c.monthly_expenses = jsonGetNumber(input, "expenses");
+  c.assets_value = jsonGetNumber(input, "assets");
+
+  // Validate required fields
+  if (c.name.empty()) {
+    cout << "{\"error\":\"Missing required field: name\"}" << endl;
+    return;
+  }
+  if (c.annual_income <= 0) {
+    cout << "{\"error\":\"Invalid or missing field: income\"}" << endl;
+    return;
+  }
+  if (c.loan_amount <= 0) {
+    cout << "{\"error\":\"Invalid or missing field: loanAmount\"}" << endl;
+    return;
+  }
+
+  // Calculate score using the SAME scoring logic
+  calculateScore(c);
+
+  // Build breakdown
+  string breakdown = generateBreakdownJSON(c);
+
+  // Output result as JSON
+  cout << fixed << setprecision(2);
+  cout << "{";
+  cout << "\"name\":\"" << c.name << "\",";
+  cout << "\"age\":" << c.age << ",";
+  cout << "\"income\":" << c.annual_income << ",";
+  cout << "\"loanAmount\":" << c.loan_amount << ",";
+  cout << "\"creditHistory\":" << c.credit_history_years << ",";
+  cout << "\"hasLoans\":" << (c.has_existing_loans ? "true" : "false") << ",";
+  cout << "\"expenses\":" << c.monthly_expenses << ",";
+  cout << "\"assets\":" << c.assets_value << ",";
+  cout << "\"score\":" << c.score << ",";
+  cout << "\"status\":\"" << (c.score >= 70 ? "Approved" : "Rejected") << "\",";
+  cout << "\"approved\":" << (c.score >= 70 ? "true" : "false") << ",";
+  cout << "\"breakdown\":" << breakdown;
+  cout << "}" << endl;
+}
+
+
 // Main menu
-int main() {
+int main(int argc, char *argv[]) {
 
-  // API MODE (used by Node)
-  if (argc > 1) {
-    Customer c;
-
-    c.name = argv[1];
-    c.income = stoi(argv[2]);
-    c.liabilities = stoi(argv[3]);
-    c.assets = stoi(argv[4]);
-
-    evaluateCustomer(c);
-
-    // Print ONLY result (important for Node)
-    cout << c.status;
-
+  // JSON API MODE — used by Node.js backend
+  // Usage: echo '{"name":"...","income":...}' | scoring_engine.exe --json
+  if (argc > 1 && strcmp(argv[1], "--json") == 0) {
+    handleJsonMode();
     return 0;
   }
 
