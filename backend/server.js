@@ -8,24 +8,24 @@ const loanRoutes = require('./routes/loanRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',')
-  : ['http://localhost:5173', 'http://localhost:3000'];
-
+// ─── Middleware ───────────────────────────────────────────────
 app.use(cors({
-  origin: allowedOrigins,
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://loan-approval-system-gules.vercel.app'],
   credentials: true,
 }));
 app.use(express.json());
 
+// ─── Request Logger (development) ────────────────────────────
 app.use((req, res, next) => {
   const timestamp = new Date().toISOString();
   console.log(`[${timestamp}] ${req.method} ${req.url}`);
   next();
 });
 
+// ─── Routes ──────────────────────────────────────────────────
 app.use('/api/loan', loanRoutes);
 
+// Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -35,6 +35,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// ─── 404 Handler ─────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({
     error: 'Not Found',
@@ -42,6 +43,7 @@ app.use((req, res) => {
   });
 });
 
+// ─── Global Error Handler ────────────────────────────────────
 app.use((err, req, res, next) => {
   console.error('❌ Unhandled Error:', err.message);
   console.error(err.stack);
@@ -53,6 +55,7 @@ app.use((err, req, res, next) => {
   });
 });
 
+// ─── MongoDB Connection & Server Start ───────────────────────
 const MONGODB_URI = process.env.MONGODB_URI;
 
 if (!MONGODB_URI || MONGODB_URI.includes('<username>')) {
@@ -82,7 +85,7 @@ mongoose.connect(MONGODB_URI)
     console.log(`  📊  Database: ${mongoose.connection.db.databaseName}`);
     console.log('═══════════════════════════════════════════════════════════');
 
-    app.listen(PORT, '0.0.0.0', () => {
+    app.listen(PORT, () => {
       console.log('');
       console.log(`  🚀  CREDO API Server running on http://localhost:${PORT}`);
       console.log(`  📡  Health check: http://localhost:${PORT}/api/health`);
