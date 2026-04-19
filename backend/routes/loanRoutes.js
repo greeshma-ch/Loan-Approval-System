@@ -3,12 +3,10 @@ const router = express.Router();
 const LoanApplication = require('../models/LoanApplication');
 const { runScoringEngine } = require('../utils/cppEngine');
 
-// ─── POST /api/loan/apply ─── Submit a new loan application ───
 router.post('/apply', async (req, res) => {
   try {
     const { name, age, income, loanAmount, creditHistory, hasLoans, expenses, assets } = req.body;
 
-    // Validate required fields
     const errors = [];
     if (!name || !name.trim()) errors.push('Name is required');
     if (!age || age < 18) errors.push('Valid age (18+) is required');
@@ -26,7 +24,6 @@ router.post('/apply', async (req, res) => {
       });
     }
 
-    // Prepare data for C++ engine
     const engineInput = {
       name: name.trim(),
       age: parseInt(age),
@@ -38,12 +35,10 @@ router.post('/apply', async (req, res) => {
       assets: parseFloat(assets),
     };
 
-    // Run C++ scoring engine
     console.log(`📊 Running C++ scoring engine for: ${engineInput.name}`);
     const engineResult = await runScoringEngine(engineInput);
     console.log(`✅ Score calculated: ${engineResult.score} → ${engineResult.status}`);
 
-    // Save to MongoDB
     const application = new LoanApplication({
       name: engineResult.name,
       age: engineResult.age,
@@ -62,7 +57,6 @@ router.post('/apply', async (req, res) => {
     await application.save();
     console.log(`💾 Application saved to MongoDB (ID: ${application._id})`);
 
-    // Return result to frontend
     res.status(201).json({
       success: true,
       data: {
@@ -79,7 +73,6 @@ router.post('/apply', async (req, res) => {
   } catch (err) {
     console.error('❌ Error processing application:', err.message);
 
-    // Determine error type for proper status code
     if (err.message.includes('not found')) {
       return res.status(503).json({
         error: 'Service Unavailable',
@@ -102,7 +95,6 @@ router.post('/apply', async (req, res) => {
   }
 });
 
-// ─── GET /api/loan/history ─── Get all applications ───
 router.get('/history', async (req, res) => {
   try {
     const applications = await LoanApplication.find()
@@ -124,7 +116,6 @@ router.get('/history', async (req, res) => {
   }
 });
 
-// ─── DELETE /api/loan/history ─── Clear all applications ───
 router.delete('/history', async (req, res) => {
   try {
     const result = await LoanApplication.deleteMany({});

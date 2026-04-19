@@ -23,15 +23,13 @@ struct Customer {
   float score;
 
   bool operator<(const Customer &other) const {
-    return score < other.score; // For max-heap
+    return score < other.score;
   }
 };
 
-// Function to calculate credit score
 float calculateScore(Customer &c) {
   float score = 0;
 
-  // Income-based score
   if (c.annual_income >= 50000)
     score += 25;
   else if (c.annual_income >= 30000)
@@ -39,27 +37,23 @@ float calculateScore(Customer &c) {
   else
     score += 5;
 
-  // Credit history score
   if (c.credit_history_years >= 5)
     score += 20;
   else if (c.credit_history_years >= 2)
     score += 10;
 
-  // Loan to income ratio
   float ratio = c.loan_amount / c.annual_income;
   if (ratio < 0.2)
     score += 20;
   else if (ratio < 0.5)
     score += 10;
 
-  // Existing loan status
   score += c.has_existing_loans ? 0 : 15;
 
   // Asset score
   if (c.assets_value >= 50000)
     score += 10;
 
-  // Monthly expense score
   if (c.monthly_expenses < 2000)
     score += 10;
   else if (c.monthly_expenses < 4000)
@@ -69,7 +63,6 @@ float calculateScore(Customer &c) {
   return score;
 }
 
-// Function to save data to CSV
 void saveToCSV(const Customer &c, bool writeHeader = false) {
   ofstream file("loan_applications.csv", ios::app);
   if (writeHeader) {
@@ -85,7 +78,6 @@ void saveToCSV(const Customer &c, bool writeHeader = false) {
   file.close();
 }
 
-// Function to evaluate loan approval
 void evaluateCustomer(const Customer &c) {
   cout << "\n--- Evaluation Result ---\n";
   cout << "Customer: " << c.name << endl;
@@ -93,7 +85,6 @@ void evaluateCustomer(const Customer &c) {
   cout << "Loan Status: " << (c.score >= 70 ? "Approved" : "Rejected") << "\n";
 }
 
-// Input customer data
 Customer getCustomerData() {
   Customer c;
   cout << "\n--- Enter Customer Data ---\n";
@@ -156,7 +147,6 @@ Customer getCustomerData() {
   return c;
 }
 
-// View application records
 void viewApplications() {
   ifstream file("loan_applications.csv");
   if (!file.is_open()) {
@@ -173,7 +163,6 @@ void viewApplications() {
   file.close();
 }
 
-// Show top N applicants
 void showTopApplicants(int n) {
   ifstream file("loan_applications.csv");
   if (!file.is_open()) {
@@ -182,7 +171,7 @@ void showTopApplicants(int n) {
   }
 
   string line;
-  getline(file, line); // skip header
+  getline(file, line);
 
   priority_queue<Customer> pq;
   while (getline(file, line)) {
@@ -222,10 +211,14 @@ void showTopApplicants(int n) {
 }
 
 // ============================================================
-// JSON HELPERS — Minimal JSON parser for flat objects (no deps)
+// JSON API HELPERS
+// ------------------------------------------------------------
+// These functions provide a minimal, dependency-free JSON
+// parser for flat objects. This is used specifically so the
+// C++ engine can communicate with the Node.js backend via
+// stdin/stdout without requiring external libraries.
 // ============================================================
 
-// Trim whitespace from both ends
 string trim(const string &s) {
   size_t start = s.find_first_not_of(" \t\n\r");
   if (start == string::npos) return "";
@@ -233,7 +226,6 @@ string trim(const string &s) {
   return s.substr(start, end - start + 1);
 }
 
-// Extract a string value for a given key from JSON
 string jsonGetString(const string &json, const string &key) {
   string search = "\"" + key + "\"";
   size_t pos = json.find(search);
@@ -251,7 +243,6 @@ string jsonGetString(const string &json, const string &key) {
   return json.substr(pos + 1, end - pos - 1);
 }
 
-// Extract a numeric value for a given key from JSON
 float jsonGetNumber(const string &json, const string &key) {
   string search = "\"" + key + "\"";
   size_t pos = json.find(search);
@@ -260,7 +251,6 @@ float jsonGetNumber(const string &json, const string &key) {
   pos = json.find(':', pos + search.length());
   if (pos == string::npos) return 0;
 
-  // Skip whitespace after colon
   pos++;
   while (pos < json.length() && (json[pos] == ' ' || json[pos] == '\t')) pos++;
 
@@ -273,7 +263,6 @@ float jsonGetNumber(const string &json, const string &key) {
   return numStr.empty() ? 0 : stof(numStr);
 }
 
-// Extract a boolean value for a given key from JSON
 bool jsonGetBool(const string &json, const string &key) {
   string search = "\"" + key + "\"";
   size_t pos = json.find(search);
@@ -286,35 +275,29 @@ bool jsonGetBool(const string &json, const string &key) {
          json.find("true", pos) < json.find('}', pos);
 }
 
-// Generate score breakdown JSON
 string generateBreakdownJSON(const Customer &c) {
   stringstream ss;
   ss << fixed << setprecision(2);
 
-  // Income score
   int incomePoints = 0;
   if (c.annual_income >= 50000) incomePoints = 25;
   else if (c.annual_income >= 30000) incomePoints = 15;
   else incomePoints = 5;
 
-  // Credit history
   int creditPoints = 0;
   if (c.credit_history_years >= 5) creditPoints = 20;
   else if (c.credit_history_years >= 2) creditPoints = 10;
 
-  // Loan ratio
   float ratio = c.loan_amount / c.annual_income;
   int ratioPoints = 0;
   if (ratio < 0.2) ratioPoints = 20;
   else if (ratio < 0.5) ratioPoints = 10;
 
-  // Existing loans
   int loanPoints = c.has_existing_loans ? 0 : 15;
 
   // Assets
   int assetPoints = c.assets_value >= 50000 ? 10 : 0;
 
-  // Expenses
   int expensePoints = 0;
   if (c.monthly_expenses < 2000) expensePoints = 10;
   else if (c.monthly_expenses < 4000) expensePoints = 5;
@@ -331,9 +314,7 @@ string generateBreakdownJSON(const Customer &c) {
   return ss.str();
 }
 
-// JSON API mode — reads JSON from stdin, outputs JSON to stdout
 void handleJsonMode() {
-  // Read all of stdin
   string input;
   string line;
   while (getline(cin, line)) {
@@ -346,7 +327,6 @@ void handleJsonMode() {
     return;
   }
 
-  // Parse input JSON
   Customer c;
   c.name = jsonGetString(input, "name");
   c.age = (int)jsonGetNumber(input, "age");
@@ -357,7 +337,6 @@ void handleJsonMode() {
   c.monthly_expenses = jsonGetNumber(input, "expenses");
   c.assets_value = jsonGetNumber(input, "assets");
 
-  // Validate required fields
   if (c.name.empty()) {
     cout << "{\"error\":\"Missing required field: name\"}" << endl;
     return;
@@ -371,13 +350,11 @@ void handleJsonMode() {
     return;
   }
 
-  // Calculate score using the SAME scoring logic
   calculateScore(c);
 
   // Build breakdown
   string breakdown = generateBreakdownJSON(c);
 
-  // Output result as JSON
   cout << fixed << setprecision(2);
   cout << "{";
   cout << "\"name\":\"" << c.name << "\",";
@@ -396,7 +373,6 @@ void handleJsonMode() {
 }
 
 
-// Main menu
 int main(int argc, char *argv[]) {
 
   // JSON API MODE — used by Node.js backend
@@ -409,7 +385,6 @@ int main(int argc, char *argv[]) {
   int choice;
   bool headerWritten = false;
 
-  // Write header only once if file is empty
   ifstream checkFile("loan_applications.csv");
   if (checkFile.peek() == ifstream::traits_type::eof()) {
     headerWritten = true;
@@ -437,7 +412,7 @@ int main(int argc, char *argv[]) {
       Customer c = getCustomerData();
       evaluateCustomer(c);
       saveToCSV(c, headerWritten);
-      headerWritten = false; // Header only once
+      headerWritten = false;
       break;
     }
     case 2:

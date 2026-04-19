@@ -1,9 +1,7 @@
-const API_BASE = '/api/loan';
+const API_BASE = import.meta.env.VITE_API_URL 
+  ? `${import.meta.env.VITE_API_URL}/api/loan` 
+  : '/api/loan';
 
-/**
- * Submit a loan application to the backend.
- * The backend forwards it to the C++ scoring engine and saves to MongoDB.
- */
 export async function submitApplication(formData) {
   const response = await fetch(`${API_BASE}/apply`, {
     method: 'POST',
@@ -32,9 +30,6 @@ export async function submitApplication(formData) {
   return data.data;
 }
 
-/**
- * Fetch all loan application history from MongoDB.
- */
 export async function getHistory() {
   const response = await fetch(`${API_BASE}/history`);
   const data = await response.json();
@@ -46,9 +41,6 @@ export async function getHistory() {
   return data.data;
 }
 
-/**
- * Clear all application history from MongoDB.
- */
 export async function clearHistory() {
   const response = await fetch(`${API_BASE}/history`, {
     method: 'DELETE',

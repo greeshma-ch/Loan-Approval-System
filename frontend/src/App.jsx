@@ -33,7 +33,6 @@ function App() {
     };
 
     try {
-      // ── Call the backend API (Node → C++ → MongoDB) ──
       const apiResult = await submitApplication(form);
 
       const res = {
@@ -50,13 +49,11 @@ function App() {
       console.warn('API unavailable, falling back to local scoring:', err.message);
       setApiError('Backend unavailable — using local scoring engine');
 
-      // ── Fallback: use the local JS scoring logic ──
       const res = evaluateLoan(data);
       setResult(res);
       setCustomerData(data);
       setCustomerName(form.name);
 
-      // Fallback: save to localStorage
       const saved = JSON.parse(localStorage.getItem('loanApplications') || '[]');
       saved.push({
         name: form.name,
@@ -71,7 +68,6 @@ function App() {
     } finally {
       setIsLoading(false);
 
-      // Scroll to result
       setTimeout(() => {
         resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 100);
@@ -83,7 +79,6 @@ function App() {
       <Header />
 
       <main className="app-main">
-        {/* Hero Section */}
         <section className="hero-section" id="hero">
 
           <h2 className="hero-title">
@@ -96,7 +91,6 @@ function App() {
           </p>
         </section>
 
-        {/* API Error Banner */}
         {apiError && (
           <div className="api-error-banner" id="api-error-banner">
             <span>⚠️</span>
@@ -104,12 +98,10 @@ function App() {
           </div>
         )}
 
-        {/* Form Section */}
         <section className="content-section" id="application-section">
           <LoanForm onSubmit={handleSubmit} isLoading={isLoading} />
         </section>
 
-        {/* Result Section */}
         {result && (
           <section className="result-section" ref={resultRef} id="result-section">
             <div className="result-grid">
@@ -119,13 +111,11 @@ function App() {
           </section>
         )}
 
-        {/* History Section */}
         <section className="content-section" id="history-section">
           <ApplicationHistory key={historyKey} />
         </section>
       </main>
 
-      {/* Footer */}
       <footer className="app-footer" id="app-footer">
         <div className="footer-inner">
           <p className="footer-text">
