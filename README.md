@@ -3,6 +3,7 @@
 A full-stack application that integrates a C++ decision engine with a modern web stack to evaluate loan applications in real time.
 
 🌐 **Live Demo:** https://loan-approval-system-gules.vercel.app
+
 🔗 **Backend API:** https://credo-backend-725u.onrender.com
 
 ---
