@@ -1,123 +1,162 @@
-# 💼 CREDO - Loan Approval System (C++ + React + Node + MongoDB Application)
+# 💼 CREDO — Loan Approval System
 
-CREDO is a Loan Approval System that evaluates and processes customer loan applications using a rule-based scoring algorithm.
-The project integrates a C++ decision engine with a Node.js backend, MongoDB Atlas for persistent storage, and a React-based frontend for an interactive user experience.
+A full-stack application that integrates a C++ decision engine with a modern web stack to evaluate loan applications in real time.
 
-🌐 Live Demo
+🌐 **Live Demo:** https://loan-approval-system-gules.vercel.app
+🔗 **Backend API:** https://credo-backend-725u.onrender.com
 
-👉 https://loan-approval-system-gules.vercel.app/
-🔗 Backend API: https://credo-backend-725u.onrender.com
+---
+
+## 🧠 What this project does
+
+CREDO lets users submit loan applications and get an approval decision based on a scoring algorithm.
+
+The interesting part is that the scoring logic is written in **C++**, while the rest of the system is built using modern web technologies. The backend acts as a bridge between the frontend and the C++ engine.
+
+---
 
 ## 📌 Features
 
-### 🧠 Backend (C++ Engine)
+### 🧠 C++ Engine
 
-* 📝 Processes loan applications with complete customer data
-* ⚡ High-performance scoring using C++ (DSA + OOP concepts)
-* 📊 Calculates a credit score based on multiple financial factors
-* ✅ Approves or rejects loans based on computed score
-* 📄 Generates structured JSON output for API integration
+* Rule-based credit scoring (DSA + OOP)
+* High-performance evaluation logic
+* JSON output for API integration
 
----
+### 🌐 Backend (Node.js)
 
-### 🌐 Backend API (Node.js + Express)
-
-* 🔗 REST API for handling loan applications
-* ⚙️ Integrates C++ engine using `child_process` (stdin/stdout)
-* 📥 Accepts application data via POST requests
-* 📤 Returns structured JSON responses
-* 💾 Stores applications in MongoDB Atlas
-* 🚀 Deployed on Render
-
----
+* REST API for loan processing
+* C++ integration via `child_process`
+* MongoDB Atlas for persistent storage
+* Deployed on Render
 
 ### 💻 Frontend (React)
 
-* 🧾 Interactive loan application form
-* ⚡ Real-time API-based processing
-* 📊 Instant loan approval/rejection display
-* 📉 Credit score breakdown visualization
-* 🎨 Clean and responsive UI
-* 🚀 Deployed on Vercel
+* Interactive loan application form
+* Real-time approval & score display
+* Clean, responsive UI (Vercel)
 
 ---
 
-## 🧮 Credit Score Breakdown
+## ⚙️ How it works
 
-| Factor                           | Points |
-| -------------------------------- | ------ |
-| High income                      | +25    |
-| Moderate income                  | +15    |
-| Low income                       | +5     |
-| Long credit history (≥5 years)   | +20    |
-| Medium credit history (≥2 years) | +10    |
-| Low loan-to-income ratio (<0.2)  | +20    |
-| Moderate ratio (<0.5)            | +10    |
-| No existing loans                | +15    |
-| High asset value                 | +10    |
-| Low monthly expenses             | +10    |
-| Moderate expenses                | +5     |
+```
+React (Frontend)
+     │
+     ▼
+Node.js / Express (API)
+     │
+     ▼
+C++ Scoring Engine
+     │
+     ▼
+MongoDB Atlas (Database)
+```
 
----
-
-## ✅ Decision Rule
-
-* **Score ≥ 70 → Approved ✅**
-* **Score < 70 → Rejected ❌**
+* The user fills out a form in the React app
+* The data is sent to the Node.js API
+* The API runs the C++ program using `child_process.spawn()`
+* The C++ engine calculates the score and returns the result
+* The result is stored in MongoDB and shown on the UI
 
 ---
 
-## 🧰 Technologies Used
+## 🚀 Tech Stack
 
-### Backend (C++ Engine):
-
-* C++17
-* STL (Priority Queue, Vectors)
-* Custom JSON parsing
-
-### Backend API:
-
-* Node.js
-* Express.js
-* child_process (C++ integration)
-* MongoDB Atlas (Cloud Database)
-* Render (Deployment)
-
-### Frontend:
+**Frontend**
 
 * React (Vite)
-* JavaScript
-* HTML/CSS
-* Vercel (Deployment)
+* CSS
+
+**Backend**
+
+* Node.js
+* Express
+
+**Core Logic**
+
+* C++ (STL)
+
+**Database**
+
+* MongoDB Atlas
+
+**Deployment**
+
+* Vercel (frontend)
+* Render (backend + C++)
+
+---
+
+## 📊 Scoring Logic
+
+The C++ engine uses a simple weighted scoring approach based on financial factors:
+
+| Factor            | Condition | Points |
+| ----------------- | --------- | ------ |
+| Annual Income     | ≥ ₹50,000 | +25    |
+|                   | ≥ ₹30,000 | +15    |
+|                   | < ₹30,000 | +5     |
+| Credit History    | ≥ 5 years | +20    |
+|                   | ≥ 2 years | +10    |
+| Loan/Income Ratio | < 0.2     | +20    |
+|                   | < 0.5     | +10    |
+| Existing Loans    | None      | +15    |
+| Asset Value       | ≥ ₹50,000 | +10    |
+| Monthly Expenses  | < ₹2,000  | +10    |
+|                   | < ₹4,000  | +5     |
+
+**Score ≥ 70 → Approved ✅**
+**Score < 70 → Rejected ❌**
+
+---
+
+## 🧩 Some things I focused on
+
+* Keeping the scoring logic in C++ instead of rewriting it in JavaScript
+* Making Node.js communicate with a compiled binary using stdin/stdout
+* Handling cases where the backend might be slow (fallback logic in frontend)
+* Structuring the project so each part (UI, API, engine, DB) is separate
+
+---
+
+## 📂 Project Structure
+
+```
+loan-approval-system/
+├── scoringlogic.cpp
+├── backend/
+├── frontend/
+```
 
 ---
 
 ## 🚀 How to Run
 
-🔹 Backend (C++)
+### 🔹 Backend (C++)
 
-1. **Clone the repo**
+Clone the repo
 
-   ```bash
-   git clone https://github.com/greeshma-ch/loan-approval-system.git
-   cd loan-approval-system
-   ```
+```bash
+git clone https://github.com/greeshma-ch/loan-approval-system.git
+cd loan-approval-system
+```
 
-2. Compile the code:
+Compile the code:
 
-   ```bash
-   g++ scoringlogic.cpp -o scoring_engine
-   ```
+```bash
+g++ scoringlogic.cpp -o scoring_engine
+```
 
-3. Run in JSON mode (for API testing):
+Run in JSON mode (for API testing):
 
-   ```bash
-   echo '{"name":"Test","income":50000,"loanAmount":20000,"creditHistory":5,"hasLoans":false,"expenses":1500,"assets":80000}' | ./scoring_engine --json
-   ```
+```bash
+echo '{"name":"Test","income":50000,"loanAmount":20000,"creditHistory":5,"hasLoans":false,"expenses":1500,"assets":80000}' | ./scoring_engine --json
+```
 
 ---
 
-🔹 Backend (Node.js)
+### 🔹 Backend (Node.js)
 
 ```bash
 cd backend
@@ -139,7 +178,7 @@ node server.js
 
 ---
 
-🔹 Frontend (React)
+### 🔹 Frontend (React)
 
 ```bash
 cd frontend
@@ -149,25 +188,31 @@ npm run dev
 
 Then open:
 
+```
 http://localhost:5173
+```
 
 ---
 
-## 📊 Features Summary
+## 🔌 API Endpoints
 
-* Full-stack loan approval system
-* C++-based decision engine integrated with web backend
-* Real-time API processing
-* Cloud database storage (MongoDB Atlas)
-* Deployed frontend and backend
-
+* `GET /api/health` → check server status
+* `POST /api/loan/apply` → submit application
+* `GET /api/loan/history` → get past records
+(e.g. ➡️https://credo-backend-725u.onrender.com/api/health)
 ---
 
 ## 🔮 Future Improvements
 
-* Authentication system (JWT)
-* Admin dashboard with analytics
-* Advanced filtering & search
-* Improved UI/UX with charts
-* Docker containerization
+* User authentication
+* Better UI/UX
+* Analytics dashboard
+* Docker setup
+
+---
+
+## 👤 Author
+
+Greeshmanjali CH
+
 
