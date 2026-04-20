@@ -1,31 +1,44 @@
-# 💼 CREDO - Loan Approval System (C++ + React Application) 
+# 💼 CREDO - Loan Approval System (C++ + React + Node + MongoDB Application)
 
 CREDO is a Loan Approval System that evaluates and processes customer loan applications using a rule-based scoring algorithm.
-The project consists of a C++ console application (backend logic) and a React-based frontend for an interactive user experience.
+The project integrates a C++ decision engine with a Node.js backend, MongoDB Atlas for persistent storage, and a React-based frontend for an interactive user experience.
 
 🌐 Live Demo
 
-👉https://loan-approval-system-gules.vercel.app/
+👉 https://loan-approval-system-gules.vercel.app/
+🔗 Backend API: https://credo-backend-725u.onrender.com
 
 ## 📌 Features
 
-### 🧠 Backend (C++ CLI)
+### 🧠 Backend (C++ Engine)
 
-* 📝 Accepts new loan applications with complete customer data
-* 📂 Saves all applications in a CSV file using file handling
+* 📝 Processes loan applications with complete customer data
+* ⚡ High-performance scoring using C++ (DSA + OOP concepts)
 * 📊 Calculates a credit score based on multiple financial factors
 * ✅ Approves or rejects loans based on computed score
-* 📄 Displays all stored applications
-* 🏆 Highlights top-scoring applicants using priority queue
+* 📄 Generates structured JSON output for API integration
+
+---
+
+### 🌐 Backend API (Node.js + Express)
+
+* 🔗 REST API for handling loan applications
+* ⚙️ Integrates C++ engine using `child_process` (stdin/stdout)
+* 📥 Accepts application data via POST requests
+* 📤 Returns structured JSON responses
+* 💾 Stores applications in MongoDB Atlas
+* 🚀 Deployed on Render
 
 ---
 
 ### 💻 Frontend (React)
 
 * 🧾 Interactive loan application form
-* ⚡ Real-time credit score calculation
+* ⚡ Real-time API-based processing
 * 📊 Instant loan approval/rejection display
+* 📉 Credit score breakdown visualization
 * 🎨 Clean and responsive UI
+* 🚀 Deployed on Vercel
 
 ---
 
@@ -56,53 +69,105 @@ The project consists of a C++ console application (backend logic) and a React-ba
 
 ## 🧰 Technologies Used
 
-### Backend:
+### Backend (C++ Engine):
 
 * C++17
-* File Handling (`fstream`)
 * STL (Priority Queue, Vectors)
-* CSV File Storage
+* Custom JSON parsing
+
+### Backend API:
+
+* Node.js
+* Express.js
+* child_process (C++ integration)
+* MongoDB Atlas (Cloud Database)
+* Render (Deployment)
 
 ### Frontend:
 
 * React (Vite)
 * JavaScript
 * HTML/CSS
+* Vercel (Deployment)
 
-
-
+---
 
 ## 🚀 How to Run
+
 🔹 Backend (C++)
+
 1. **Clone the repo**
+
    ```bash
    git clone https://github.com/greeshma-ch/loan-approval-system.git
    cd loan-approval-system
-2. Compile the code using g++ or any C++ compiler:
+   ```
+
+2. Compile the code:
 
    ```bash
-   g++ scoringlogic.cpp -o loan_system
-   ./loan_system
+   g++ scoringlogic.cpp -o scoring_engine
+   ```
+
+3. Run in JSON mode (for API testing):
+
+   ```bash
+   echo '{"name":"Test","income":50000,"loanAmount":20000,"creditHistory":5,"hasLoans":false,"expenses":1500,"assets":80000}' | ./scoring_engine --json
+   ```
+
+---
+
+🔹 Backend (Node.js)
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+PORT=5000
+```
+
+Run server:
+
+```bash
+node server.js
+```
+
+---
 
 🔹 Frontend (React)
+
+```bash
 cd frontend
 npm install
 npm run dev
+```
 
 Then open:
 
 http://localhost:5173
 
-##📊 Features Summary
-* Rule-based credit scoring system
-* Loan approval decision engine
-* CLI-based backend with file storage
-* Interactive frontend interface
+---
 
-##🔮 Future Improvements
-* Backend API integration
-* Database support (MongoDB / SQL)
-* Authentication system
-* Analytics dashboard
+## 📊 Features Summary
 
+* Full-stack loan approval system
+* C++-based decision engine integrated with web backend
+* Real-time API processing
+* Cloud database storage (MongoDB Atlas)
+* Deployed frontend and backend
+
+---
+
+## 🔮 Future Improvements
+
+* Authentication system (JWT)
+* Admin dashboard with analytics
+* Advanced filtering & search
+* Improved UI/UX with charts
+* Docker containerization
 
